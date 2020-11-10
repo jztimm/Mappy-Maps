@@ -7,21 +7,6 @@ import mapStyles from './mapStyles'
 
 
 
-
-
-
-
-
-// function Map() {
-//   return (
-//     <GoogleMap
-//       defaultZoom={10}
-//       defaultCenter={{ lat: 40.844784, lng: -73.864830 }}
-//     />
-//   );
-// }
-
-
 const libraries = ["places"];
 const mapContainerStyle = {
   width: "100vw",
@@ -32,7 +17,9 @@ const center = {
   lng: -73.864830
 };
 const options = {
-  styles: mapStyles
+  styles: mapStyles,
+  disableDefaultUI: true,
+  zoomControl: true,
 }
 
 
@@ -42,17 +29,38 @@ export default function App() {
     libraries,
   })
 
+  const [markers, setMarkers] = React.useState([]);
+
   if (loadError) return "Error loading maps";
   if(!isLoaded) return "Loading Maps";
 
   return (
     <div>
+      <h1>Jz's Maps 🗺️</h1>
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
-        zoom={8}
+        zoom={10}
         center={center}
         options={options}
-        ></GoogleMap>
-    </div>)
-  ;
+        
+        onClick={(event) => {
+          setMarkers((current) => [
+            ...current,
+            {
+              lat: event.latLng.lat(),
+              lng: event.latLng.lng(),
+              time: new Date(),
+            },
+          ]);
+          }}
+        >
+          {markers.map((marker) => (
+            <Marker
+            key={marker.time.toISOString()}
+            position={{ lat: marker.lat, lng: marker.lng}} />
+          ))}
+
+        </GoogleMap>
+    </div>
+  );
 }
