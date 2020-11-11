@@ -1,5 +1,9 @@
 import React from 'react';
+
+// Imports the map
 import { GoogleMap, useLoadScript, Marker, InfoWindow } from '@react-google-maps/api';
+
+// Format Time
 import { formatRelative } from "date-fns";
 
 import usePlacesAutocomplete, {
@@ -16,6 +20,7 @@ import {
 } from "@reach/combobox";
 import "@reach/combobox/styles.css"
 
+// Custome Map Style
 import mapStyles from './mapStyles'
 
 
@@ -25,6 +30,8 @@ const mapContainerStyle = {
   width: "100vw",
   height: "100vh",
 };
+
+// Keep the map from rerendering if the map is updated
 const center = {
   lat: 40.844784,
   lng: -73.864830
@@ -37,15 +44,18 @@ const options = {
 
 
 export default function App() {
+
+  // Setup Google Script
   const {isLoaded, loadError} = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
     libraries,
   })
 
+  // State to keep track of the Markers & what was currently Selected
   const [markers, setMarkers] = React.useState([]);
   const [selected, setSelected] = React.useState(null);
 
-
+  // Created a callback function so a new function isn't created multiple times
   const onMapClick = React.useCallback((event) => {
     setMarkers((current) => [
       ...current,
@@ -57,11 +67,13 @@ export default function App() {
     ]);
     }, [])
 
+    // Creates the map
     const mapRef = React.useRef();
     const onMapLoad = React.useCallback((map) => {
       mapRef.current = map;
     }, [])
 
+    // Pans to a specified point on the map
     const panTo = React.useCallback(({lat, lng}) => {
       mapRef.current.panTo({lat, lng});
       mapRef.current.setZoom(14);
