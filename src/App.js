@@ -75,6 +75,7 @@ export default function App() {
       <h1>Jz's Maps 🗺️</h1>
 
       <Search panTo={panTo}/>
+      <Locate panTo={panTo}/>
 
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
@@ -118,6 +119,21 @@ export default function App() {
   );
 }
 
+function Locate({panTo}) {
+  return (
+    <button className="locate" onClick={() => {
+      navigator.geolocation.getCurrentPosition((position) => {
+        panTo({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      }, () => null);
+    }}>
+      <img src="compass.svg" alt="compass - locate me"/>
+    </button>
+  );
+}
+
 function Search({panTo}) {
   const {ready, value,
     suggestions: {status, data},
@@ -134,12 +150,12 @@ function Search({panTo}) {
     <div className="search">
       <Combobox
         onSelect={async (address) => {
-          setValue(address, false);
-          clearSuggestions()
+          setValue(address, false);                  // update state and place w.e was chosen in there
+          clearSuggestions()                         // clear suggestions in Search
 
           try {
-            const results = await getGeocode({address});
-            const { lat, lng } = await getLatLng(results[0]);
+            const results = await getGeocode({address});      // call getGeocode
+            const { lat, lng } = await getLatLng(results[0]); // get first result
             panTo({lat, lng});
           } catch (error) {
             console.log("error!")
@@ -155,9 +171,11 @@ function Search({panTo}) {
             placeholder="Enter an Address"
           />
           <ComboboxPopover>
+            <ComboboxList>
             {status === "OK" && data.map(({id, description}) => (
               <ComboboxOption key={id} value={description} />
             ))}
+            </ComboboxList>
           </ComboboxPopover>
       </Combobox>
     </div>
