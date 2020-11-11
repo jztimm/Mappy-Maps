@@ -35,5 +35,4 @@
 This web app makes use of the following:
 
 - Reactjs
-- Firebase - Backend
 - JavaScript - CSS framework based on Flexbox.
